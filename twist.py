@@ -155,7 +155,7 @@ def check_active_window():
                 process = psutil.Process(pid)
                 process_name = process.name()
                 # 打印当前活动进程名称
-                print(f"当前活动进程名称：{process_name}")
+                # print(f"当前活动进程名称：{process_name}")
                 if process_name.lower() == target_process_name.lower():
                     current_window_active.set()
                 else:
