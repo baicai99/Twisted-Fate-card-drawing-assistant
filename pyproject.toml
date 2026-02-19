@@ -1,0 +1,22 @@
+[project]
+name = "twisted-fate-card-drawing-assistant"
+version = "0.1.0"
+description = "Automatic card selection assistant for Twisted Fate in League of Legends"
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+dependencies = [
+  "psutil==6.0.0",
+  "pynput==1.7.7",
+  "pywin32==306; sys_platform == 'win32'",
+]
+
+[dependency-groups]
+dev = []
+build = [
+  "pyinstaller==5.13.2",
+  "pyinstaller-hooks-contrib==2024.7",
+  "altgraph==0.17.4",
+  "pefile==2024.8.26",
+  "pywin32-ctypes==0.2.3; sys_platform == 'win32'",
+  "packaging==24.0",
+]
