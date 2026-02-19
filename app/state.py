@@ -10,7 +10,6 @@ class RuntimeState:
     ctrl_press: bool = False
     paused: bool = False
     last_r_time: float = 0.0
-    self_w: int = 0
     request_id: int = 0
     req_color: str = "黄"
     request_start_ts: float = 0.0
@@ -68,21 +67,6 @@ class SharedState:
     def is_ctrl_pressed(self) -> bool:
         with self._lock:
             return self._state.ctrl_press
-
-    def increment_self_w(self) -> None:
-        with self._lock:
-            self._state.self_w += 1
-
-    def consume_self_w(self) -> bool:
-        with self._lock:
-            if self._state.self_w > 0:
-                self._state.self_w -= 1
-                return True
-            return False
-
-    def self_w_count(self) -> int:
-        with self._lock:
-            return self._state.self_w
 
     def register_request(self, color: str, now: float) -> int:
         with self._lock:

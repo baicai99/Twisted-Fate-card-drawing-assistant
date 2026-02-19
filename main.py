@@ -84,7 +84,6 @@ def main():
     window_guard = WindowGuard(config, state)
 
     def click_w(is_lock_press: bool = False, request_id: Optional[int] = None):
-        state.increment_self_w()
         sendkey(0x11, 1)
         sendkey(0x11, 0)
         if is_lock_press and request_id is not None:

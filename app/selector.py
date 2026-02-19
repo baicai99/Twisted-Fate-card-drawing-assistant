@@ -32,12 +32,13 @@ class Selector:
     def start(self):
         self._worker.start()
 
-    def submit(self, color: str) -> int:
-        self._click_w(False, None)
+    def submit(self, color: str, open_cycle: bool = True) -> int:
+        if open_cycle:
+            self._click_w(False, None)
         now = time.perf_counter()
         request_id = self._state.register_request(color, now)
         self._selector_event.set()
-        self._debug_log("submit", f"提交请求 req={request_id} color={color}")
+        self._debug_log("submit", f"提交请求 req={request_id} color={color} open_cycle={open_cycle}")
         return request_id
 
     def _worker_loop(self):

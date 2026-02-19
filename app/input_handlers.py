@@ -74,18 +74,17 @@ class InputHandlers:
             return True
 
         if key == "E":
-            self._selector.submit("黄")
+            self._selector.submit("黄", open_cycle=True)
         elif key == "W":
-            if self._state.consume_self_w():
+            if getattr(event, "is_injected", False):
                 return True
-            self._selector.submit("蓝")
-            return False
+            self._selector.submit("蓝", open_cycle=False)
         elif key == "A":
-            self._selector.submit("红")
+            self._selector.submit("红", open_cycle=True)
         elif key == "R":
             now = time.time()
             if self._state.try_handle_r_press(now, self._config.timing.r_double_press_gap):
-                self._selector.submit("黄")
+                self._selector.submit("黄", open_cycle=True)
 
         return True
 
@@ -109,10 +108,5 @@ class InputHandlers:
         return True
 
     def should_suppress_key(self, key_name: str, is_injected: bool) -> bool:
-        if key_name != "W" or is_injected:
-            return False
-
-        if self._state.is_paused() or self._state.is_ctrl_pressed() or self._state.self_w_count() > 0:
-            return False
-
-        return self._window_guard.is_allowed()
+        _ = (key_name, is_injected)
+        return False
