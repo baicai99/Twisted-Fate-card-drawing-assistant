@@ -80,7 +80,12 @@ def main():
     debug_log = build_debug_logger(config.debug_enabled, config.log_throttle_sec)
     perf_collector = build_perf_collector(config.perf_stats_enabled, config.perf_stats_report_every)
 
-    color_detector = ColorDetector(config.colors, config.timing.double_sample_gap)
+    color_detector = ColorDetector(
+        config.colors,
+        config.timing.double_sample_gap,
+        sample_radius_px=config.timing.sample_radius_px,
+        sample_min_hits=config.timing.sample_min_hits,
+    )
     window_guard = WindowGuard(config, state)
 
     def click_w(is_lock_press: bool = False, request_id: Optional[int] = None):

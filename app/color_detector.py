@@ -7,9 +7,17 @@ from app.config import ColorThresholds
 
 
 class ColorDetector:
-    def __init__(self, thresholds: ColorThresholds, double_sample_gap: float):
+    def __init__(
+        self,
+        thresholds: ColorThresholds,
+        double_sample_gap: float,
+        sample_radius_px: int = 1,
+        sample_min_hits: int = 2,
+    ):
         self._thresholds = thresholds
         self._double_sample_gap = double_sample_gap
+        self._sample_radius_px = max(0, int(sample_radius_px))
+        self._sample_min_hits = max(1, int(sample_min_hits))
         self._gdi32 = windll.gdi32
         self._user32 = windll.user32
         self._hdc_lock = threading.Lock()
@@ -87,13 +95,33 @@ class ColorDetector:
         return self.color_matches_target(r2, g2, b2, target_color)
 
     def match_target_fast(self, px: int, py: int, target_color: str) -> bool:
-        r1, g1, b1 = self.get_rgb_fast(px, py)
-        if not self.color_matches_target(r1, g1, b1, target_color):
+        hits_1 = self._match_hits_fast(px, py, target_color)
+        if hits_1 < self._sample_min_hits:
             return False
 
         time.sleep(self._double_sample_gap)
-        r2, g2, b2 = self.get_rgb_fast(px, py)
-        return self.color_matches_target(r2, g2, b2, target_color)
+        hits_2 = self._match_hits_fast(px, py, target_color)
+        return hits_2 >= self._sample_min_hits
+
+    def _match_hits_fast(self, px: int, py: int, target_color: str) -> int:
+        # Always test center first, then the surrounding neighborhood.
+        points = [(px, py)]
+        radius = self._sample_radius_px
+        if radius > 0:
+            for dy in range(-radius, radius + 1):
+                for dx in range(-radius, radius + 1):
+                    if dx == 0 and dy == 0:
+                        continue
+                    points.append((px + dx, py + dy))
+
+        hits = 0
+        for sx, sy in points:
+            r, g, b = self.get_rgb_fast(sx, sy)
+            if self.color_matches_target(r, g, b, target_color):
+                hits += 1
+                if hits >= self._sample_min_hits:
+                    return hits
+        return hits
 
     def get_color_name(self, r: int, g: int, b: int) -> str:
         if self.is_yellow(r, g, b):

@@ -15,6 +15,8 @@ class TimingConfig:
     partial_match_grace: float = 0.08
     focus_recovery_window: float = 0.05
     double_sample_gap: float = 0.0015
+    sample_radius_px: int = 1
+    sample_min_hits: int = 2
     r_double_press_gap: float = 8.0
 
 
